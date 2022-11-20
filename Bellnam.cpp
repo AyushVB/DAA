@@ -1,53 +1,71 @@
-#include<iostream>
+#include <iostream>
+#include<climits>
 using namespace std;
-#define inf 999
-void bellmanFord(int **a,int n){
-	int V[n]={0};
-	for(int i=1;i<n;i++){
-		V[i]=inf;
-	}
-	for(int i=0;i<n;i++){
-		int t=0;
-		cout<<i+1<<"=>\t"
-		for(int j=0;j<n;j++){
-			if(V[i]==inf ||arr[i][j]=0){
-				cout<<"\t-"
-				continue;
-				
-			}
-			else if(V[i]+arr[i][j]<V[j]){
-				V[j]=V[i]+arr[i][j];
-				cout<<"\t"<<V[j];
-				t=1;
-			}
-		}
-		cout<<endl;
-		if(t==0) break;
-	}
+
+struct Edge{
+    int u,v,w;
+};
+struct Graph{
+    int V,E;
+    Edge* e;
+};
+
+struct Graph* createGraph(int v,int e){
+    Graph* g=new Graph;
+    g->V=v;
+    g->E=e;
+    
+    g->e=new Edge[e];
+    for(int i=0;i<e;i++){
+        cout<<"Enter the u v w for edge #"<<i+1<<" :- ";
+        cin>>g->e[i].u>>g->e[i].v>>g->e[i].w;
+    }
+    return g;
+}
+void BellmanFord(Graph* g,int source){
+    int V=g->V;
+    int E=g->E;
+    int dist[V];
+    
+    for(int i=0;i<V;i++){
+        dist[i]=INT_MAX;
+    }
+    dist[source]=0;
+    
+    for(int i=0;i<V-1;i++){
+        for(int j=0;j<E;j++){
+            int u=g->e[j].u;
+            int v=g->e[j].v;
+            int w=g->e[j].w;
+            if(dist[u]!=INT_MAX && dist[u]+w<dist[v])
+                dist[v]=dist[u]+w;
+        }
+    }
+    
+    for(int j=0;j<E;j++){
+        int u=g->e[j].u;
+        int v=g->e[j].v;
+        int w=g->e[j].w;
+        if(dist[u]!=INT_MAX && dist[u]+w<dist[v]){
+        cout<<"There will be negative edge cycle....";
+        return;}
+    }
+    cout<<"\n"
+    for(int i=0;i<V;i++){
+        cout<<dist[i]<<"\t";
+    }
+    
 }
 int main(){
-	int n;
-	cout<<"Enter the no. of vertex : ";
-	cin>>n;
-	int ** a=new int*[n];
-	for(int i=0;i<n;i++){
-		a[i]=new int [n];
-		for(int j=0;j<n;j++){
-			a[i][j]=0;
-			
-		}
-	}
-	while(1){
-		int i,j,t=0;
-		cout<<"Enter the i and j";
-		cin>>i;
-		cin>>j;
-		cout<<"Enter the cost of edge";
-		cin>>a[i][j];
-		cout<<"you want to terminate press 1 otherwise 0 : ";
-		cin>>t;
-		if(t==1)break;
-	}
-	bellmanFord(a,n);
-	
+    int V,E,S;
+    cout<<"Enter the no of vertex :- ";
+    cin>>V;
+    cout<<"Enter the no of edges :- ";
+    cin>>E;
+    cout<<"Enter the source vertex consider vertex name start from 0 :- ";
+    cin>>S;
+    Graph* g=createGraph(V,E);
+    
+    BellmanFord(g, S);
+    
 }
